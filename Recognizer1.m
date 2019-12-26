@@ -7,7 +7,8 @@ Fs = 16384; % 16KHz
 
 %sound(training_data{1,1}, 16384);
 
-MFCC = 0;
+OneCB = 1;
+MFCC = 1;
 Training = 1;
 TrainAccuracy = 1;
 ValidationAccuracy = 1;
@@ -108,21 +109,33 @@ end
 
 %% Train Accuracy
 if TrainAccuracy
-    evaluate_model(dataTrain, NumsCodeBook, MFCC, 'Train', Fs, p, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    if OneCB
+        evaluate_model2(dataTrain, NumsCodeBook, 'Train', Fs, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    else
+        evaluate_model(dataTrain, NumsCodeBook, MFCC, 'Train', Fs, p, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    end
 end
 
 
 %% Validation Accuracy
 
 if ValidationAccuracy
-    evaluate_model(dataVal, NumsCodeBook, MFCC, 'Validation', Fs, p, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    if OneCB
+        evaluate_model2(dataVal, NumsCodeBook, 'Validation', Fs, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    else
+        evaluate_model(dataVal, NumsCodeBook, MFCC, 'Validation', Fs, p, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    end
 end
 
 
 %% Test Accuracy
 
 if TestAccuracy
-    evaluate_model(test_data, NumsCodeBook, MFCC, 'Test', Fs, p, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    if OneCB
+        evaluate_model2(test_data, NumsCodeBook, 'Test', Fs, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    else
+        evaluate_model(test_data, NumsCodeBook, MFCC, 'Test', Fs, p, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    end
 end
 
 
