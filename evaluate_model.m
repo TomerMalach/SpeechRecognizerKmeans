@@ -1,4 +1,4 @@
-function [] = evaluate_model(data, CB, MFCC, type, Fs, p, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames)
+function [] = evaluate_model(data, CB, MFCC, type, Fs, p, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames)
 
     Numbers = size(data, 1);
     Speakers = size(data, 2);

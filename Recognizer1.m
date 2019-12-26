@@ -108,21 +108,21 @@ end
 
 %% Train Accuracy
 if TrainAccuracy
-    evaluate_model(dataTrain, NumsCodeBook, MFCC, 'Train', Fs, p, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    evaluate_model(dataTrain, NumsCodeBook, MFCC, 'Train', Fs, p, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
 end
 
 
 %% Validation Accuracy
 
 if ValidationAccuracy
-    evaluate_model(dataVal, NumsCodeBook, MFCC, 'Validation', Fs, p, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    evaluate_model(dataVal, NumsCodeBook, MFCC, 'Validation', Fs, p, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
 end
 
 
 %% Test Accuracy
 
 if TestAccuracy
-    evaluate_model(test_data, NumsCodeBook, MFCC, 'Test', Fs, p, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
+    evaluate_model(test_data, NumsCodeBook, MFCC, 'Test', Fs, p, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
 end
 
 
