@@ -3,6 +3,7 @@ function r = vqlbg(d, k, MFCC)
 %
 % Inputs: d contains training data vectors (one per column)
 %         k is number of centroids required
+%         MFCC is a flag signaling that were dealing with MFCC otherwise we are dealing with LPC coefficients and autocorrelation matrices
 %
 % Output: r contains the result VQ codebook (k columns, one for each centroids)
 %
