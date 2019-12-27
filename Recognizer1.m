@@ -28,7 +28,7 @@ WindowsLength = 20*10^-3; % 30 msec
 dataTrain = training_data(:, 1:70);
 dataVal  = training_data(:, 71:end);
 
-NumberOfSamplesAtEachWindow = round(Fs * WindowsLength); 
+NumberOfSamplesAtEachWindow = round(Fs * WindowsLength); # 30ms worth of samples according to the sample freq
 StepSizeBetweenFrames = round(Overlap * NumberOfSamplesAtEachWindow);
 
 
@@ -46,22 +46,23 @@ if Training
     %Centers = [256, 512, 512, 512, 512, 1024, 1024, 1024, 512, 512]; % LPC
     %Centers = [256, 256, 256, 256, 256, 256, 256, 256, 256, 256]; % LPC
     
-    Centers = [128, 128, 128, 128, 128, 128, 128, 128, 128, 128];
+    Centers = [128, 128, 128, 128, 128, 128, 128, 128, 128, 128]; % num of centers at each codebook
 
     %Centers = [1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024];
 
-    for num = 1:Numbers
-    
-        % Number of MFCC vecs per num
+    for num = 1:Numbers  
+        % Evaluate the number of MFCC/LPC vecs per number
         NumOfVecs = 0;
         for speaker = 1:Speakers
+            % clear the "empty" parts at the start/end of the signal (with margin to make sure we dont miss out on important data)
             [StartPoint, EndPoint] = end_point_detect(dataTrain{num,speaker}, Fs, 0);
+            % (?) the signal length is calculated in this way to get a correct assessment of how much frames the signal is going to be divided to (?)
             SignalLength = length(dataTrain{num,speaker}(StartPoint:EndPoint)) - NumberOfSamplesAtEachWindow + StepSizeBetweenFrames;
-%            SignalLength = length(dataTrain{num,speaker}) - NumberOfSamplesAtEachWindow + StepSizeBetweenFrames;
-            FramesNumberPerRec = fix((SignalLength)/StepSizeBetweenFrames);
+            % SignalLength = length(dataTrain{num,speaker}) - NumberOfSamplesAtEachWindow + StepSizeBetweenFrames;
+            FramesNumberPerRec = fix( (SignalLength) / StepSizeBetweenFrames);
             NumOfVecs = NumOfVecs + FramesNumberPerRec;
         end
-
+        % data structure to hold the MFCC\LPC representation for each recording
         if MFCC
             SignalVecs{num} = zeros(MFCC_coeffs_num + 1, NumOfVecs);
         else
@@ -71,26 +72,26 @@ if Training
         VecOffset = 1;
 
         for speaker = 1:Speakers
-
-            % Edge Detector
+            
+            % Edge Detector - throwing away "empty" parts of the signal at start\end with margin
             [StartPoint, EndPoint] = end_point_detect(dataTrain{num,speaker}, Fs, 0);
             dataTrain{num,speaker} = dataTrain{num,speaker}(StartPoint:EndPoint);
             
-            % Framing
+            % Framing - segmenting the signal into overlapping frames
             FramesSig = enframe(dataTrain{num,speaker}, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames);
 
-            % Hamming Window
+            % Hamming Window - multiplying each frame by Hamming Window, because we want to minimize the artificial sidelobes and get a cleaner result in the spectral domain
             NumberOfFrame = size(FramesSig, 1);
             HammingWindow = hamming(NumberOfSamplesAtEachWindow); % how much windows to create
             FramesSig = (FramesSig .* repmat(HammingWindow', NumberOfFrame, 1))';           
             
             if MFCC
-                % Get MFCC coeffs
+                % Get MFCC coeffs, Note that WindowLength or OverlapLength arg is in samples
                 coeffs = squeeze(mfcc(FramesSig ,Fs, 'WindowLength', round(Fs*WindowsLength), 'OverlapLength', round(Fs*WindowsLength*0.8)));
             else
-                % Get LPC coeffs & Cov vec (since the cov mat is toplitz
+                % Get LPC(?) coeffs & Cov vec (since the cov mat is toplitz
                 % mat)
-                coeffs = AutoCorrelationPerColumn(FramesSig, p);
+                coeffs = AutoCorrelationPerColumn(FramesSig, p); % (?)
             end
             
             SignalVecs{num}(:, VecOffset:(VecOffset + size(coeffs, 2) - 1)) = coeffs;              
