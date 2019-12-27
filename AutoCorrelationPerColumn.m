@@ -1,6 +1,6 @@
 function [R] = AutoCorrelationPerColumn(A, p)
-    
     N = size(A, 2);
+    % for N frames, calculate the (!)normalized(!) autocorrelation topelitz matrix
     
     R = zeros(p + 1, N);
     
