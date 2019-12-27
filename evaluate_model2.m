@@ -1,4 +1,4 @@
-function [] = evaluate_model(data, CB, type, Fs, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames)
+function [Accuracy] = evaluate_model2(data, CB, type, Fs, NumCoeffs, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames)
 
     Numbers = size(data, 1);
     Speakers = size(data, 2);
@@ -22,7 +22,7 @@ function [] = evaluate_model(data, CB, type, Fs, WindowsLength, NumberOfSamplesA
             FramesSig = (FramesSig .* repmat(HammingWindow', NumberOfFrame, 1))'; 
 
             % Get MFCC coeffs
-            coeffs = squeeze(mfcc(FramesSig ,Fs, 'WindowLength', round(Fs*WindowsLength), 'OverlapLength', round(Fs*WindowsLength*0.8)));
+            coeffs = squeeze(mfcc(FramesSig ,Fs, 'WindowLength', round(Fs*WindowsLength), 'OverlapLength', round(Fs*WindowsLength*0.8), 'NumCoeffs', NumCoeffs));
             
             cb_dist = [];
             for i=1:Numbers

@@ -1,10 +1,9 @@
-function [] = evaluate_model(data, CB, MFCC, type, Fs, p, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames)
+function [Accuracy] = evaluate_model(data, CB, MFCC, type, Fs, NumCoeffs, WindowsLength, NumberOfSamplesAtEachWindow, StepSizeBetweenFrames)
 
     Numbers = size(data, 1);
     Speakers = size(data, 2);
 
     Prediction = zeros(Numbers, Speakers);
-    Prediction(1, :) = inf; 
     Accuracy = zeros(Numbers, 1);
 
     for num = 1:Numbers
@@ -24,10 +23,10 @@ function [] = evaluate_model(data, CB, MFCC, type, Fs, p, WindowsLength, NumberO
 
             if MFCC
                 % Get MFCC coeffs
-                coeffs = squeeze(mfcc(FramesSig ,Fs, 'WindowLength', round(Fs*WindowsLength), 'OverlapLength', round(Fs*WindowsLength*0.8)));
+                coeffs = squeeze(mfcc(FramesSig ,Fs, 'WindowLength', round(Fs*WindowsLength), 'OverlapLength', round(Fs*WindowsLength*0.8), 'NumCoeffs', NumCoeffs));
             else
-                % Get AutoCorrelation
-                coeffs = AutoCorrelationPerColumn(FramesSig, p);
+                % Get cov vec (the cov mat it is toplitz mat)
+                coeffs = AutoCorrelationPerColumn(FramesSig, NumCoeffs);
             end
             
             for i=1:Numbers
